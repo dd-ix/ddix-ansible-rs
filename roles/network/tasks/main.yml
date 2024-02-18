@@ -43,17 +43,18 @@
 - name: create bird-deploy user
   ansible.builtin.user:
     name: bird-deploy
+    password: "*"
     groups: bird
 
 - name: configure authorized_keys
   ansible.builtin.authorized_key:
     user: bird-deploy
-    key: "{{ arouteserver_public_key }}"
+    key: '{{ ssh_authorized_keys + "\n" + arouteserver_public_key }}'
     exclusive: yes
 
 - name: create config directory
   ansible.builtin.file:
-    path: /etc/bird.peering
+    path: /etc/bird
     state: directory
     owner: bird-deploy
     group: bird
