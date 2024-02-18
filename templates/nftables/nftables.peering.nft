@@ -1,0 +1,78 @@
+{{ ansible_managed | comment }}
+
+flush ruleset
+
+table inet filter {
+    chain output {
+        type filter hook output priority 100; policy accept;
+
+        # stateful allow
+        ct state related,established accept
+    }
+
+    chain input {
+        type filter hook input priority 0; policy drop;
+
+        # stateful allow
+        ct state related,established accept
+
+        # handle peering lan access
+{% for pfx4 in ip_peering_addresses|ansible.utils.ipv4('network')|unique|sort %}
+        ip saddr {{ pfx4 }} jump peering_in
+{% endfor %}
+{% for pfx6 in ip_peering_addresses|ansible.utils.ipv6('network')|unique|sort %}
+        ip6 saddr {{ pfx6 }} jump peering_in
+{% endfor %}
+
+        # allow any from other route servers
+{% for host in groups['rs']|reject('equalto', inventory_hostname)|list %}
+{% for ipv4 in hostvars[host].ip_peering_addresses|ansible.utils.ipv4('address') %}
+        ip saddr {{ ipv4 }} accept
+{% endfor %}
+{% for ipv6 in hostvars[host].ip_peering_addresses|ansible.utils.ipv6('address') %}
+        ip6 saddr {{ ipv6 }} accept
+{% endfor %}
+{% endfor %}
+
+        # allowed incoming ICMP(v6) packets
+        ip protocol icmp icmp type {
+            destination-unreachable,  # type 3
+            time-exceeded,  # type 11
+            parameter-problem,  # type 12
+        } accept
+        ip6 nexthdr icmpv6 icmpv6 type {
+            destination-unreachable,  # type 1
+            packet-too-big,  # type 2
+            time-exceeded,  # type 3
+            parameter-problem,  # type 4
+        } accept
+
+        # ICMP(v6) handling
+        ip6 nexthdr icmpv6 icmpv6 type {
+            nd-neighbor-solicit,  # type 135
+            nd-neighbor-advert,  # type 136
+        } ip6 hoplimit 255 accept
+
+        # drop everything else
+        drop
+    }
+
+    chain forward {
+        type filter hook forward priority 0; policy drop;
+
+        # drop everything
+        drop
+    }
+
+    chain peering_in {
+        # allow bfd
+        udp dport 3784 accept
+
+        # allow bgp
+        tcp dport 179 accept
+
+        # allow echo-requests
+        ip protocol icmp icmp type echo-request accept
+        ip6 nexthdr icmpv6 icmpv6 type echo-request accept
+    }
+}

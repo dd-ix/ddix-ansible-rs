@@ -1,0 +1,83 @@
+{{ ansible_managed | comment }}
+---
+
+# yaml-language-server: $schema=https://ifstate.net/schema/ifstate.conf.schema.json
+
+defaults:
+  # defaults
+  - match:
+      - ifname: ""
+    clear_addresses: yes
+    link:
+      state: down
+      master: null
+
+
+interfaces:
+- name: lom1
+  link:
+    kind: physical
+    businfo: '0000:02:00.0'
+- name: lom2
+  link:
+    kind: physical
+    businfo: '0000:02:00.1'
+
+- name: eth2
+  link:
+    state: up
+    kind: physical
+    businfo: '0000:06:00.0'
+    master: bond0
+- name: eth3
+  link:
+    state: up
+    kind: physical
+    businfo: '0000:06:00.1'
+    master: bond0
+
+- name: bond0
+  link:
+    state: up
+    kind: bond
+    # 802.3ad
+    bond_mode: 4
+    bond_ad_lacp_rate: 1
+    # layer3+4
+    bond_xmit_hash_policy: 1
+    bond_miimon: 100
+    bond_updelay: 300
+
+- name: {{ ip_mgmt_vlan.name }}
+  addresses:
+    - {{ ip_mgmt_address }}
+  link:
+    kind: vlan
+    link: bond0
+    vlan_id: {{ ip_mgmt_vlan.vid }}
+    state: up
+
+routing:
+  routes:
+  - to: ::/0
+    via: {{ ip_mgmt_gateway }}
+  rules: []
+
+namespaces:
+  peering:
+    interfaces:
+      - name: ixp-peering
+        addresses:
+{% for ip in ip_peering_addresses|sort %}
+          - {{ ip }}
+{% endfor %}
+        link:
+          kind: vlan
+          link: bond0
+          link_netns: null
+          vlan_id: 600
+          state: up
+
+    routing:
+      routes: []
+      rules: []

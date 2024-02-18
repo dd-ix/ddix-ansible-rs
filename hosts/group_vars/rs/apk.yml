@@ -1,0 +1,23 @@
+apk_packages:
+- alpine-base
+- bird
+- birdwatcher
+# - bird_exporter
+- bmon
+- busybox-extras
+- busybox-mdev-openrc
+- chrony
+- doas
+- ifstate
+- lldpd
+- mc
+- nftables
+- openssh
+- openssl
+# - prometheus-node-exporter
+- python3
+- rosh
+- tcpdump
+- util-linux
+- utmps
+- vim

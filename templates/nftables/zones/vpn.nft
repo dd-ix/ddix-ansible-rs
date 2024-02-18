@@ -1,0 +1,52 @@
+    chain zone_vpn_adm {
+        # allow management access
+        jump noc_access
+
+        {{ final_policy(szone) }}
+    }
+
+    chain zone_vpn_external {
+        {{ final_policy(szone) }}
+    }
+
+    chain zone_vpn_ixp {
+        # allow management access
+        jump noc_access
+
+        {{ final_policy(szone) }}
+    }
+
+    chain zone_vpn_lab {
+        # allow management access
+        jump noc_access
+
+        {{ final_policy(szone) }}
+    }
+
+    chain zone_vpn_mgmt {
+        # allow management access
+        jump noc_access
+
+        {{ final_policy(szone) }}
+    }
+
+    chain zone_vpn_public {
+        # allow management access
+        jump noc_access
+
+        {{ final_policy(szone) }}
+    }
+
+    chain zone_vpn_services {
+        # vpn shall not use the proxy
+        tcp dport 8080 reject
+
+        # allow management access
+        jump noc_access
+
+        {{ final_policy(szone) }}
+    }
+
+    chain zone_vpn_vpn {
+        {{ final_policy(szone) }}
+    }

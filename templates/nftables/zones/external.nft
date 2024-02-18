@@ -1,0 +1,39 @@
+    chain zone_external_adm {
+        {{ final_policy(szone) }}
+    }
+
+    chain zone_external_external {
+        {{ final_policy(szone) }}
+    }
+
+    chain zone_external_ixp {
+        {{ final_policy(szone) }}
+    }
+
+    chain zone_external_lab {
+        {{ final_policy(szone) }}
+    }
+
+    chain zone_external_mgmt {
+        {{ final_policy(szone) }}
+    }
+
+    chain zone_external_public {
+        # rpx.dd-ix.net
+        ip daddr 212.111.245.178 tcp dport {80, 443} accept
+        ip6 daddr 2a01:7700:80b0:6000::443 tcp dport {80, 443} accept
+
+        # ns.dd-ix.net
+        ip saddr $ip_ans ip daddr 212.111.245.179 meta l4proto {tcp, udp} th dport 53 accept
+        ip6 saddr $ip6_ans ip6 daddr 2a01:7700:80b0:6000::53 meta l4proto {tcp, udp} th dport 53 accept
+
+        {{ final_policy(szone) }}
+    }
+
+    chain zone_external_services {
+        {{ final_policy(szone) }}
+    }
+
+    chain zone_external_vpn {
+        {{ final_policy(szone) }}
+    }

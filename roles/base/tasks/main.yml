@@ -1,0 +1,97 @@
+# (un)install packages
+- name: configure package world
+  ansible.builtin.template:
+    src: world.j2
+    dest: /etc/apk/world
+
+- name: install packages
+  ansible.builtin.command:
+    cmd: apk add
+  register: apk_add
+  changed_when: "' Installing ' in apk_add.stdout or ' Purging ' in apk_add.stdout"
+
+
+# configure files protected by lbu
+- name: configure protected files
+  ansible.builtin.template:
+    src: lbu.list.j2
+    dest: /etc/apk/protected_paths.d/lbu.list
+
+
+# configure ssh's authorized_keys
+- name: configure authorized_keys
+  ansible.builtin.authorized_key:
+    user: root
+    key: "{{ ssh_authorized_keys }}"
+    exclusive: yes
+
+
+# keep some configuration history
+- name: configure lbu
+  ansible.builtin.template:
+    src: lbu.conf.j2
+    dest: /etc/lbu/lbu.conf
+
+
+# enable utmp/wtmp
+- name: enable utmps on boot
+  ansible.builtin.service:
+    name: utmp-init
+    enabled: yes
+    state: started
+
+
+# tune motd and prompt
+- name: configure motd
+  ansible.builtin.template:
+    src: motd.j2
+    dest: /etc/motd
+
+- name: enable color_prompt in profiles.d
+  ansible.builtin.file:
+    src: color_prompt.sh.disabled
+    dest: /etc/profile.d/00_color_prompt.sh
+    state: link
+
+
+# copy /.modloop to tmpfs, allows upgrades via setup-bootable w/o
+# loosing access to kernel object files for the running kernel
+- name: configure copy-modloop on boot
+  ansible.builtin.template:
+    src: modloop.start.j2
+    dest: /etc/local.d/modloop.start
+    mode: 0755
+  notify: copy modloop
+
+- name: enable local.d init script
+  ansible.builtin.service:
+    name: local
+    enabled: yes
+
+
+# cleanup ifupdown
+- name: configure motd
+  ansible.builtin.template:
+    src: interfaces.j2
+    dest: /etc/network/interfaces
+
+
+# configure resolv.conf
+- name: configure motd
+  ansible.builtin.template:
+    src: resolv.conf.j2
+    dest: /etc/resolv.conf
+
+
+# configure chrony
+- name: configure chrony
+  ansible.builtin.template:
+    src: chrony.conf.j2
+    dest: /etc/chrony/chrony.conf
+  register: chrony_conf
+
+- name: enable chrony service
+  ansible.builtin.service:
+    name: chronyd
+    enabled: yes
+    state: "{% if chrony_conf.changed %}re{% endif %}started"

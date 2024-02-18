@@ -1,0 +1,71 @@
+    chain zone_services_adm {
+        {{ final_policy(szone) }}
+    }
+
+    chain zone_services_external {
+        # basic network services (domain, ntp)
+        jump nis_clients
+
+        # any: authoritative nameserver for ACME DNS-01
+        ip6 daddr $ip6_ans meta l4proto {tcp, udp} th dport 53 accept
+
+        # fpx: outgoing http(s)
+        ip6 saddr 2a01:7700:80b0:6001::3 tcp dport {80, 443} accept
+        ip saddr 10.96.1.3 tcp dport {80, 443} accept
+
+        # cloud: allow bbbCONF api endpoints
+        ip saddr 10.96.1.6 ip daddr $ip_bbbconf tcp dport 443 accept
+
+        # lists01: allow pop3.migadu.com
+        ip6 saddr 2a01:7700:80b0:6001::8 ip6 daddr $ip6_migadu_pop3 tcp dport 995 accept
+
+        # portal01: allow api.peeringdb.com access
+        ip6 saddr 2a01:7700:80b0:6001::2 ip6 daddr 2600:1f18:4110::/48 tcp dport 443 accept
+        # portal01: allow whois.radb.net
+        ip6 saddr 2a01:7700:80b0:6001::2 ip6 daddr 2001:48a8:6880::18 tcp dport 43 accept
+
+        {{ final_policy(szone) }}
+    }
+
+    chain zone_services_ixp {
+        # svc-portal01 snmp access
+        ip6 saddr 2a01:7700:80b0:6001::2 ip6 daddr $ip6_portal_snmp udp dport 161 accept
+
+        # svc-lg01 birdwatcher api access
+        ip6 saddr 2a01:7700:80b0:6001::10 ip6 daddr {2a01:7700:80b0:4001::2, 2a01:7700:80b0:4002::2} tcp dport 29184 accept
+
+        {{ final_policy(szone) }}
+    }
+
+    chain zone_services_lab {
+        {{ final_policy(szone) }}
+    }
+
+    chain zone_services_mgmt {
+        # svc-portal01 snmp access
+        ip6 saddr 2a01:7700:80b0:6001::2 ip6 daddr $ip6_portal_snmp udp dport 161 accept
+
+        {{ final_policy(szone) }}
+    }
+
+    chain zone_services_public {
+        # hidden primary nameserver for ACME DNS-01
+        ip6 daddr 2a01:7700:80b0:6000::53 meta l4proto {tcp, udp} th dport 53 accept
+
+        # allow rpx access (OAuth callbacks)
+        ip6 daddr 2a01:7700:80b0:6000::443 tcp dport 443 accept
+        ip daddr 212.111.245.178 tcp dport 443 accept
+
+        # allow mta access (mail sending)
+        ip6 daddr 2a01:7700:80b0:6000::25 tcp dport 25 accept
+
+        {{ final_policy(szone) }}
+    }
+
+    chain zone_services_services {
+        {{ final_policy(szone) }}
+    }
+
+    chain zone_services_vpn {
+        {{ final_policy(szone) }}
+    }

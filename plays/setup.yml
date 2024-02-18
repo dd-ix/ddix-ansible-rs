@@ -1,0 +1,18 @@
+#!/usr/bin/env ansible-playbook
+
+- name: setup system
+  hosts: rs
+  roles:
+    - base
+    - network
+  tags:
+    - base
+
+- name: setup bird
+  hosts: rs
+  roles:
+    - rs
+    - auditlog
+  tags:
+    - base
+    - rs

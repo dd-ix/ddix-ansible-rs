@@ -1,0 +1,27 @@
+{{ ansible_managed | comment }}
+
+{% for server in ntp_servers %}
+server {{ server }} iburst
+{% endfor %}
+
+{% for peer in ntp_peers|default([]) %}
+server {{ peer }} iburst xleave
+{% endfor %}
+
+driftfile /var/lib/chrony/chrony.drift
+dumpdir /var/run/chrony
+
+# use hardware timestamping if available
+hwtimestamp *
+
+# allow queries in general
+allow
+
+# add more distance penalty per stratum
+stratumweight 0.004
+
+# enable kernel rtc sync (defaults to off in chrony)
+rtcsync
+
+# disable chronyc via udp
+cmdport 0

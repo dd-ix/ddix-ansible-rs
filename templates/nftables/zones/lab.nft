@@ -1,0 +1,40 @@
+    chain zone_lab_adm {
+        {{ final_policy(szone) }}
+    }
+
+    chain zone_lab_external {
+        # basic network services (domain, ntp)
+        jump nis_clients
+
+        # allow outgoing http(s)
+        tcp dport {80, 443} accept
+
+        {{ final_policy(szone) }}
+    }
+
+    chain zone_lab_ixp {
+        {{ final_policy(szone) }}
+    }
+
+    chain zone_lab_lab {
+        {{ final_policy(szone) }}
+    }
+
+    chain zone_lab_mgmt {
+        {{ final_policy(szone) }}
+    }
+
+    chain zone_lab_public {
+        {{ final_policy(szone) }}
+    }
+
+    chain zone_lab_services {
+        # forward proxy
+        jump fpx_clients
+
+        {{ final_policy(szone) }}
+    }
+
+    chain zone_lab_vpn {
+        {{ final_policy(szone) }}
+    }

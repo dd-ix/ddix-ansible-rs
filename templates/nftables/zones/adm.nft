@@ -1,0 +1,58 @@
+    chain zone_adm_adm {
+        {{ final_policy(szone) }}
+    }
+
+    chain zone_adm_external {
+        # basic network services (domain, ntp)
+        jump nis_clients
+
+        # allow outgoing http(s)
+        tcp dport {80, 443} accept
+
+        {{ final_policy(szone) }}
+    }
+
+    chain zone_adm_ixp {
+        # allow management access
+        jump noc_access
+
+        {{ final_policy(szone) }}
+    }
+
+    chain zone_adm_lab {
+        # allow management access
+        jump noc_access
+
+        {{ final_policy(szone) }}
+    }
+
+    chain zone_adm_mgmt {
+        # allow management access
+        jump noc_access
+
+        {{ final_policy(szone) }}
+    }
+
+    chain zone_adm_public {
+        # allow management access
+        jump noc_access
+
+        {{ final_policy(szone) }}
+    }
+
+    chain zone_adm_services {
+        # allow management access
+        jump noc_access
+
+        # forward proxy
+        jump fpx_clients
+
+        {{ final_policy(szone) }}
+    }
+
+    chain zone_adm_vpn {
+        # allow management access
+        jump noc_access
+
+        {{ final_policy(szone) }}
+    }

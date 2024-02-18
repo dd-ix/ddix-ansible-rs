@@ -1,0 +1,55 @@
+    chain zone_mgmt_adm {
+        {{ final_policy(szone) }}
+    }
+
+    chain zone_mgmt_external {
+        # basic network services (domain, ntp)
+        jump nis_clients
+
+        # ToDo: mno001 transition, temp.
+        # authoritative nameserver for ACME DNS-01
+        ip6 daddr $ip6_ans meta l4proto {tcp, udp} th dport 53 accept
+
+        # ToDo: mno001 transition, temp. allow any outgoing
+        ip6 saddr 2a01:7700:80b0:7000::2 accept
+
+        {{ final_policy(szone) }}
+    }
+
+    chain zone_mgmt_ixp {
+        {{ final_policy(szone) }}
+    }
+
+    chain zone_mgmt_lab {
+        {{ final_policy(szone) }}
+    }
+
+    chain zone_mgmt_mgmt {
+        {{ final_policy(szone) }}
+    }
+
+    chain zone_mgmt_public {
+        # ToDo: mno001 transition, temp.
+        # hidden primary nameserver for ACME DNS-01
+        ip6 daddr 2a01:7700:80b0:6000::53 meta l4proto {tcp, udp} th dport 53 accept
+
+        # allow svc-hv01 to send email notifications
+        ip6 daddr 2a01:7700:80b0:6000::25 tcp dport 25 accept
+
+        # ToDo: mno001 transition, temp.
+        # allow rpx access (OAuth callbacks)
+        ip6 daddr 2a01:7700:80b0:6000::443 tcp dport 443 accept
+
+        {{ final_policy(szone) }}
+    }
+
+    chain zone_mgmt_services {
+        # forward proxy
+        jump fpx_clients
+
+        {{ final_policy(szone) }}
+    }
+
+    chain zone_mgmt_vpn {
+        {{ final_policy(szone) }}
+    }

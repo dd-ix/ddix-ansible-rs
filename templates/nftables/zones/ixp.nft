@@ -1,0 +1,37 @@
+    chain zone_ixp_adm {
+        {{ final_policy(szone) }}
+    }
+
+    chain zone_ixp_external {
+        # basic network services (domain, ntp)
+        jump nis_clients
+
+        {{ final_policy(szone) }}
+    }
+
+    chain zone_ixp_ixp {
+        {{ final_policy(szone) }}
+    }
+
+    chain zone_ixp_lab {
+        {{ final_policy(szone) }}
+    }
+
+    chain zone_ixp_mgmt {
+        {{ final_policy(szone) }}
+    }
+
+    chain zone_ixp_public {
+        {{ final_policy(szone) }}
+    }
+
+    chain zone_ixp_services {
+        # switches: radius-auth
+        ip6 saddr 2a01:7700:80b0:4000::/52 ip6 daddr 2a01:7700:80b0:6001::4 udp dport 1812 accept
+
+        {{ final_policy(szone) }}
+    }
+
+    chain zone_ixp_vpn {
+        {{ final_policy(szone) }}
+    }

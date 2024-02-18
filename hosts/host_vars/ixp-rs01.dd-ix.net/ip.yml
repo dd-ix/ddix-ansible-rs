@@ -1,0 +1,10 @@
+ip_mgmt_vlan:
+  name: ixp-mgmt-cc
+  vid: 601
+
+ip_mgmt_address: 2a01:7700:80b0:4001::2/64
+ip_mgmt_gateway: 2a01:7700:80b0:4001::1
+
+ip_peering_addresses:
+  - 2001:7f8:79::dff0:1/64
+  - 193.201.151.65/26

@@ -1,0 +1,70 @@
+# configure sysctl setttings
+- name: configure sysctl tunables
+  ansible.builtin.template:
+    src: local.conf.j2
+    dest: /etc/sysctl.d/local.conf
+  register: sysctl_conf
+
+- name: restart sysctl
+  ansible.builtin.service:
+    name: sysctl
+    state: restarted
+  when: sysctl_conf.changed
+
+
+# enable lldpd
+- name: enable starting lldpd on boot
+  service:
+    name: lldpd
+    enabled: yes
+    state: started
+
+
+# prepare network config
+- name: create config directory
+  ansible.builtin.file:
+    path: /etc/ifstate
+    state: directory
+
+- name: enable ifstate on boot
+  ansible.builtin.service:
+    name: ifstate
+    enabled: yes
+
+
+# prepare firewall
+- name: enable nftables on boot
+  ansible.builtin.service:
+    name: nftables
+    enabled: yes
+
+
+# configure bird env
+- name: create bird-deploy user
+  ansible.builtin.user:
+    name: bird-deploy
+    groups: bird
+
+- name: configure authorized_keys
+  ansible.builtin.authorized_key:
+    user: root
+    key: "{{ ssh_authorized_keys }}"
+    exclusive: yes
+
+- name: create config directory
+  ansible.builtin.file:
+    path: /etc/bird.peering
+    state: directory
+    owner: bird-deploy
+    group: bird
+    mode: 0750
+
+- name: configure bird's rc config
+  ansible.builtin.template:
+    src: bird.j2
+    dest: /etc/conf.d/bird
+
+- name: enable starting bird on boot
+  ansible.builtin.service:
+    name: bird
+    enabled: yes

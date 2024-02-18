@@ -1,0 +1,54 @@
+    chain zone_public_adm {
+        {{ final_policy(szone) }}
+    }
+
+    chain zone_public_external {
+        # basic network services (domain, ntp)
+        jump nis_clients
+
+        # ToDo: mno001 transition, temp. allow any outgoing
+        ip saddr 212.111.245.178 accept
+
+        # ns.dd-ix.net
+        ip daddr $ip_ans ip saddr 212.111.245.179 meta l4proto {tcp, udp} th dport 53 accept
+        ip6 daddr $ip6_ans ip6 saddr 2a01:7700:80b0:6000::53 meta l4proto {tcp, udp} th dport 53 accept
+
+        # mta.dd-ix.net
+        ip saddr 212.111.245.180 tcp dport 25 accept
+        ip6 saddr 2a01:7700:80b0:6000::25 tcp dport 25 accept
+
+        {{ final_policy(szone) }}
+    }
+
+    chain zone_public_ixp {
+        {{ final_policy(szone) }}
+    }
+
+    chain zone_public_lab {
+        {{ final_policy(szone) }}
+    }
+
+    chain zone_public_mgmt {
+        # ToDo: native sites on mno001 (legacy)
+        ip6 saddr 2a01:7700:80b0:6000::443 ip6 daddr 2a01:7700:80b0:7000::2 tcp dport 443 accept
+
+        {{ final_policy(szone) }}
+    }
+
+    chain zone_public_public {
+        {{ final_policy(szone) }}
+    }
+
+    chain zone_public_services {
+        # forward proxy
+        jump fpx_clients
+
+        # rpx backend services
+        ip6 saddr 2a01:7700:80b0:6000::443 ip6 daddr 2a01:7700:80b0:6001::/64 tcp dport 443 accept
+
+        {{ final_policy(szone) }}
+    }
+
+    chain zone_public_vpn {
+        {{ final_policy(szone) }}
+    }
