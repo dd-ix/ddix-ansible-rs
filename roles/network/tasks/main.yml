@@ -49,7 +49,7 @@
 - name: configure authorized_keys
   ansible.builtin.authorized_key:
     user: bird-deploy
-    key: '{{ ssh_authorized_keys + "\n" + arouteserver_public_key }}'
+    key: "{{ (ssh_authorized_keys, arouteserver_public_key)|join(\"\n\") }}"
     exclusive: yes
 
 - name: create config directory
