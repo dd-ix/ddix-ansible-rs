@@ -17,10 +17,10 @@ table inet filter {
         ct state related,established accept
 
         # handle peering lan access
-{% for pfx4 in ip_peering_addresses|ansible.utils.ipv4('network')|unique|sort %}
+{% for pfx4 in ip_peering_addresses|ansible.utils.ipv4('network/prefix')|unique|sort %}
         ip saddr {{ pfx4 }} jump peering_in
 {% endfor %}
-{% for pfx6 in ip_peering_addresses|ansible.utils.ipv6('network')|unique|sort %}
+{% for pfx6 in ip_peering_addresses|ansible.utils.ipv6('network/prefix')|unique|sort %}
         ip6 saddr {{ pfx6 }} jump peering_in
 {% endfor %}
 
