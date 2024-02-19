@@ -65,6 +65,31 @@ routing:
 
 namespaces:
   peering:
+    options:
+      sysctl:
+        all: &peering-sysctl
+          ipv6:
+            # this machine should not participate in SLAAC
+            accept_ra: 0
+            autoconf: 0
+            # no redirects nor evil RH0
+            accept_redirects: 0
+            accept_source_route: 0
+            # no forwarding
+            forwarding: 0
+          ipv4:
+            # no redirects nor source route
+            accept_redirects: 0
+            send_redirects: 0
+            accept_source_route: 0
+            # handle arp requests strict
+            arp_ignore: 1
+            arp_notify: 1
+            # do strict rp filtering
+            rp_filter: 1
+            # no forwarding
+            forwarding: 0
+        default: *peering-sysctl
     interfaces:
       - name: ixp-peering
         addresses:
