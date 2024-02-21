@@ -40,15 +40,15 @@
 
 
 # configure bird env
-- name: create bird-deploy user
+- name: create ddix-deploy user
   ansible.builtin.user:
-    name: bird-deploy
+    name: ddix-deploy
     password: "*"
     groups: bird
 
 - name: configure authorized_keys
   ansible.builtin.authorized_key:
-    user: bird-deploy
+    user: ddix-deploy
     key: "{{ (ssh_authorized_keys, arouteserver_public_key)|join(\"\n\") }}"
     exclusive: yes
 
@@ -56,7 +56,7 @@
   ansible.builtin.file:
     path: /etc/bird
     state: directory
-    owner: bird-deploy
+    owner: ddix-deploy
     group: bird
     mode: 0750
 
