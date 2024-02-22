@@ -2,7 +2,7 @@ apk_packages:
 - alpine-base
 - bird
 - birdwatcher
-# - bird_exporter
+- bird_exporter
 - bmon
 - busybox-extras
 - busybox-mdev-openrc
@@ -14,7 +14,8 @@ apk_packages:
 - nftables
 - openssh
 - openssl
-# - prometheus-node-exporter
+- prometheus-node-exporter
+- prometheus-openrc-exporter
 - python3
 - rosh
 - tcpdump

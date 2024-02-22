@@ -12,6 +12,13 @@
   hosts: rs
   roles:
     - rs
+    - exporters
+  tags:
+    - rs
+
+- name: write audit log
+  hosts: rs
+  roles:
     - auditlog
   tags:
     - base

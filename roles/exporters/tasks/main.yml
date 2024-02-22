@@ -1,0 +1,9 @@
+- name: enable prometheus exporters
+  ansible.builtin.service:
+    name: "{{ item }}"
+    enabled: yes
+    state: started
+  loop:
+    - bird_exporter
+    - node-exporter
+    - openrc-exporter
