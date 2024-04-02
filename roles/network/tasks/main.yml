@@ -52,6 +52,11 @@
     key: "{{ (ssh_authorized_keys, arouteserver_public_key)|join(\"\n\") }}"
     exclusive: yes
 
+- name: configure doas for ddix-deploy
+  ansible.builtin.template:
+    src: ddix-deploy.conf.j2
+    dest: /etc/doas.d/ddix-deploy.conf
+
 - name: create config directory
   ansible.builtin.file:
     path: /etc/bird
