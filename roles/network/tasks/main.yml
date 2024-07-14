@@ -14,7 +14,7 @@
 
 # enable lldpd
 - name: Enable starting lldpd on boot
-  service:
+  ansible.builtin.service:
     name: lldpd
     enabled: true
     state: started
@@ -47,7 +47,7 @@
     groups: bird
 
 - name: Configure authorized_keys
-  ansible.builtin.authorized_key:
+  ansible.posix.authorized_key:
     user: ddix-deploy
     key: "{{ (ssh_authorized_keys, arouteserver_public_key)|join(\"\n\") }}"
     exclusive: true

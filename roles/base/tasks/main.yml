@@ -20,7 +20,7 @@
 
 # configure ssh's authorized_keys
 - name: Configure authorized_keys
-  ansible.builtin.authorized_key:
+  ansible.posix.authorized_key:
     user: root
     key: "{{ ssh_authorized_keys }}"
     exclusive: true
