@@ -1,0 +1,6 @@
+# .ansible-lint
+
+skip_list:
+  - jinja[spacing]
+  - no-relative-paths
+  - risky-file-permissions
