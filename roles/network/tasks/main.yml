@@ -63,7 +63,7 @@
     state: directory
     owner: ddix-deploy
     group: bird
-    mode: 0750
+    mode: "0750"
 
 - name: Configure bird's rc config
   ansible.builtin.template:
