@@ -23,7 +23,7 @@
   ansible.builtin.authorized_key:
     user: root
     key: "{{ ssh_authorized_keys }}"
-    exclusive: yes
+    exclusive: true
 
 
 # keep some configuration history
@@ -37,7 +37,7 @@
 - name: Enable utmps on boot
   ansible.builtin.service:
     name: utmp-init
-    enabled: yes
+    enabled: true
     state: started
 
 
@@ -66,7 +66,7 @@
 - name: Enable local.d init script
   ansible.builtin.service:
     name: local
-    enabled: yes
+    enabled: true
 
 
 # cleanup ifupdown
@@ -93,5 +93,5 @@
 - name: Enable chrony service
   ansible.builtin.service:
     name: chronyd
-    enabled: yes
+    enabled: true
     state: "{% if chrony_conf.changed %}re{% endif %}started"

@@ -16,7 +16,7 @@
 - name: Enable starting lldpd on boot
   service:
     name: lldpd
-    enabled: yes
+    enabled: true
     state: started
 
 
@@ -29,7 +29,7 @@
 - name: Enable ifstate on boot
   ansible.builtin.service:
     name: ifstate
-    enabled: yes
+    enabled: true
 
 
 # prepare firewall (we have no ruleset, yet)
@@ -50,7 +50,7 @@
   ansible.builtin.authorized_key:
     user: ddix-deploy
     key: "{{ (ssh_authorized_keys, arouteserver_public_key)|join(\"\n\") }}"
-    exclusive: yes
+    exclusive: true
 
 - name: Configure doas for ddix-deploy
   ansible.builtin.template:
@@ -73,4 +73,4 @@
 - name: Enable starting bird on boot
   ansible.builtin.service:
     name: bird
-    enabled: yes
+    enabled: true
