@@ -32,11 +32,11 @@
     enabled: yes
 
 
-# prepare firewall
-- name: enable nftables on boot
+# prepare firewall (we have no ruleset, yet)
+- name: Disable nftables on boot
   ansible.builtin.service:
     name: nftables
-    enabled: yes
+    enabled: false
 
 
 # configure bird env
