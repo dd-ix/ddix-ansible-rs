@@ -1,4 +1,4 @@
-- name: Run git describe
+- name: Run git describe # noqa command-instead-of-module
   ansible.builtin.command: git describe --always --broken
   delegate_to: localhost
   changed_when: false
@@ -10,7 +10,7 @@
   changed_when: false
   register: tail
 
-- name: Audit current run
+- name: Audit current run # noqa no-changed-when
   ansible.builtin.shell:
     cmd: echo "{{ '%-20s '|format(git_describe.stdout) }}$(date -uI)    ${SSH_CLIENT%% *}" >> /etc/ansible.log
   when: not tail.stdout.startswith(git_describe.stdout + ' ')

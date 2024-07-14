@@ -6,7 +6,7 @@
     validate: /usr/bin/ifstatecli -c %s check
   register: ifstate_conf
 
-- name: The network configuration has changed, consider to apply the ifstate config!
+- name: The network configuration has changed, consider to apply the ifstate config! # noqa no-handler
   ansible.builtin.pause:
   when: ifstate_conf.changed
 

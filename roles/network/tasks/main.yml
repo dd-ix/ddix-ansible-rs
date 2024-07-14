@@ -5,7 +5,7 @@
     dest: /etc/sysctl.d/local.conf
   register: sysctl_conf
 
-- name: Restart sysctl
+- name: Restart sysctl # noqa no-handler
   ansible.builtin.service:
     name: sysctl
     state: restarted
