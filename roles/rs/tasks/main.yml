@@ -1,5 +1,5 @@
 # configure ifstate
-- name: configure ifstate
+- name: Configure ifstate
   ansible.builtin.template:
     src: ../templates/ifstate/config.yml.j2
     dest: /etc/ifstate/config.yml
@@ -12,14 +12,14 @@
 
 
 # configure nftables for peering lan
-- name: configure nftables rules
+- name: Configure nftables rules
   ansible.builtin.template:
     src: ../templates/nftables/nftables.peering.nft
     dest: /etc/nftables.peering.nft
     validate: ip netns exec peering /usr/sbin/nft --check -f %s
   register: nftables_peering_nft
 
-- name: reload nftables rules
+- name: Reload nftables rules
   ansible.builtin.command:
     cmd: ip netns exec peering /usr/sbin/nft -f /etc/nftables.peering.nft
   changed_when: nftables_peering_nft.changed

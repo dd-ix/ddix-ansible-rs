@@ -1,11 +1,11 @@
 # configure sysctl setttings
-- name: configure sysctl tunables
+- name: Configure sysctl tunables
   ansible.builtin.template:
     src: local.conf.j2
     dest: /etc/sysctl.d/local.conf
   register: sysctl_conf
 
-- name: restart sysctl
+- name: Restart sysctl
   ansible.builtin.service:
     name: sysctl
     state: restarted
@@ -13,7 +13,7 @@
 
 
 # enable lldpd
-- name: enable starting lldpd on boot
+- name: Enable starting lldpd on boot
   service:
     name: lldpd
     enabled: yes
@@ -21,12 +21,12 @@
 
 
 # prepare network config
-- name: create config directory
+- name: Create config directory
   ansible.builtin.file:
     path: /etc/ifstate
     state: directory
 
-- name: enable ifstate on boot
+- name: Enable ifstate on boot
   ansible.builtin.service:
     name: ifstate
     enabled: yes
@@ -40,24 +40,24 @@
 
 
 # configure bird env
-- name: create ddix-deploy user
+- name: Create ddix-deploy user
   ansible.builtin.user:
     name: ddix-deploy
     password: "*"
     groups: bird
 
-- name: configure authorized_keys
+- name: Configure authorized_keys
   ansible.builtin.authorized_key:
     user: ddix-deploy
     key: "{{ (ssh_authorized_keys, arouteserver_public_key)|join(\"\n\") }}"
     exclusive: yes
 
-- name: configure doas for ddix-deploy
+- name: Configure doas for ddix-deploy
   ansible.builtin.template:
     src: ddix-deploy.conf.j2
     dest: /etc/doas.d/ddix-deploy.conf
 
-- name: create config directory
+- name: Create config directory
   ansible.builtin.file:
     path: /etc/bird
     state: directory
@@ -65,12 +65,12 @@
     group: bird
     mode: 0750
 
-- name: configure bird's rc config
+- name: Configure bird's rc config
   ansible.builtin.template:
     src: bird.j2
     dest: /etc/conf.d/bird
 
-- name: enable starting bird on boot
+- name: Enable starting bird on boot
   ansible.builtin.service:
     name: bird
     enabled: yes

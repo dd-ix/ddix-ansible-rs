@@ -1,4 +1,4 @@
-- name: enable prometheus exporters
+- name: Enable prometheus exporters
   ansible.builtin.service:
     name: "{{ item }}"
     enabled: yes

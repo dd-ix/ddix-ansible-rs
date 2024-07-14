@@ -1,16 +1,16 @@
-- name: run git describe
+- name: Run git describe
   ansible.builtin.command: git describe --always --broken
   delegate_to: localhost
   changed_when: no
   register: git_describe
 
-- name: get last ansible run
+- name: Get last ansible run
   ansible.builtin.command: tail -n 1 /etc/ansible-audit.log
   failed_when: no
   changed_when: no
   register: tail
 
-- name: audit current run
+- name: Audit current run
   ansible.builtin.shell:
     cmd: echo "{{ '%-20s '|format(git_describe.stdout) }}$(date -uI)    ${SSH_CLIENT%% *}" >> /etc/ansible.log
   when: not tail.stdout.startswith(git_describe.stdout + ' ')

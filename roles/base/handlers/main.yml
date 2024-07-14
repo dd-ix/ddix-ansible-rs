@@ -1,4 +1,4 @@
-- name: copy modloop
+- name: Copy modloop
   ansible.builtin.command:
     cmd: copy-modloop
   failed_when: no
