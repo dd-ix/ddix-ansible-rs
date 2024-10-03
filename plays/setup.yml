@@ -5,6 +5,7 @@
   roles:
     - base
     - network
+    - checkmk
   tags:
     - base
 

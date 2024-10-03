@@ -1,0 +1,3 @@
++usr/local/sbin/check_mk_agent
++usr/lib/check_mk_agent/plugins/lbu_status
++usr/lib/check_mk_agent/plugins/lnx_if_netns

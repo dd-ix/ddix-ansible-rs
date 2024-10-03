@@ -1,0 +1,35 @@
+- name: Create agent plugin directory
+  ansible.builtin.file:
+    path: /usr/lib/check_mk_agent/plugins
+    state: directory
+
+- name: Install lbu-status plugin
+  ansible.builtin.copy:
+    src: "files/plugins/lbu_status"
+    dest: /usr/lib/check_mk_agent/plugins/lbu_status
+    owner: root
+    mode: "0755"
+
+- name: Install linux-if netns plugin
+  ansible.builtin.copy:
+    src: files/plugins/lnx_if_netns
+    dest: /usr/lib/check_mk_agent/plugins/lnx_if_netns
+    owner: root
+    mode: "0755"
+
+- name: Add lbu protected file items
+  ansible.builtin.copy:
+    src: check-mk-agent.list
+    dest: /etc/apk/protected_paths.d/check-mk-agent.list
+
+- name: Create /usr/local/sbin
+  ansible.builtin.file:
+    path: /usr/local/sbin
+    state: directory
+
+- name: Install CheckMK Agent
+  ansible.builtin.copy:
+    src: files/check_mk_agent.linux
+    dest: /usr/local/sbin/check_mk_agent
+    owner: root
+    mode: "0755"

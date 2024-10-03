@@ -1,5 +1,6 @@
 apk_packages:
 - alpine-base
+- bash
 - bird
 - birdwatcher
 - bird_exporter
@@ -7,6 +8,7 @@ apk_packages:
 - busybox-extras
 - busybox-mdev-openrc
 - chrony
+- coreutils
 - doas
 - ifstate
 - lldpd
@@ -14,6 +16,7 @@ apk_packages:
 - nftables
 - openssh
 - openssl
+- procps
 - prometheus-node-exporter
 - prometheus-openrc-exporter
 - python3

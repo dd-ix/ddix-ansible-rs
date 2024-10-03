@@ -1,0 +1,28 @@
+#!/bin/bash
+
+# source the check_mk_agent script
+MK_SOURCE_AGENT="y"
+. /usr/local/sbin/check_mk_agent
+
+if [ "$#" == "0" ]; then
+    if test -d /run/netns && test -n "$(find /run/netns -maxdepth 1 -name '*' -type f -print -quit)"; then
+        # call myself for each named netns
+        for netns_fn in /run/netns/*; do
+            netns="$(basename $netns_fn)"
+            ip netns exec "$netns" $0 "$netns"
+        done
+    fi
+else
+    netns="$1"
+
+    # dump interface and bonding data, use some sed hacks
+    # to change interface names to `$ifname@$netns`
+    section_lnx_if | \
+        sed -E 's|^(\d+:\s+.+)(: <.+)|\1@'"$netns"'\2|' | \
+        sed -E 's|^(\[.+)(\])$|\1@'"$netns"'\2|' | \
+        sed -E 's|^(\[start_iplink)@'"$netns"'\]$|\1]|' | \
+        sed -E 's|^(\[end_iplink)@'"$netns"'\]$|\1]|' | \
+        sed -E 's|^(\s*[^:]+):((\s+\d+)+)$|\1@'"$netns"': \2|'
+    section_bonding_interfaces | \
+        sed -E 's|^(==> .+)( <==)|\1@'"$netns"'\2|'
+fi

@@ -1,0 +1,57 @@
+#!/usr/bin/python3
+
+# cmk_lbu_status - check-mk plugin for Alpine Linux lbu status
+#
+# Authors:
+#   Philipp Kilian <kilian@ibh.de>
+#
+# Copyright Holder:
+#   2018-2022 (C) IBH IT-Service GmbH [http://www.ibh.de/]
+#
+# License:
+#   This program is free software; you can redistribute it and/or modify
+#   it under the terms of the GNU General Public License as published by
+#   the Free Software Foundation; either version 2 of the License, or
+#   (at your option) any later version.
+#
+#   This program is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU General Public License for more details.
+#
+#   You should have received a copy of the GNU General Public License
+#   along with this package; if not, write to the Free Software
+#   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
+
+# Put this file into the PLUGINSDIR [$MK_LIBDIR/plugins] of the agent system
+
+import subprocess as sp
+import os
+from datetime import datetime as dt
+
+try:
+    pipeout = sp.check_output(["lbu", "status"]).decode('utf-8')
+except:
+    exit()
+
+current_time = dt.now()
+
+pipeout = pipeout.split("\n")[:-1]
+if not pipeout or pipeout[0][:3].lower() != "lbu":
+    print("<<<lbu_status>>>")
+    for result in pipeout:
+        changemode = result.split(" ")[0]
+        if len(result.split(" ")) > 2:
+            splitted_result = result.replace("\n", "").split(" ")
+            filepath = "/" + splitted_result[1]
+            for result_part in splitted_result[2:]:
+                 filepath += " " + result_part
+        else:
+            filepath = "/" + result.split(" ")[1]
+        if changemode == "A" or changemode == "U":
+            changetime = dt.fromtimestamp(os.lstat(filepath).st_mtime)
+            timediff = current_time - changetime
+            seconds = timediff.seconds + timediff.days * 86400
+            print(seconds, changemode, filepath)
+        else:
+            print(0, changemode, filepath)
