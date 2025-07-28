@@ -1,0 +1,18 @@
+#!/bin/sh
+
+export LANG=C
+
+push_status() {
+    exec curl -s -o /dev/null "https://status.dd-ix.net/api/push/{{ uptimekuma_bird_token }}?status=$1&msg=$2&ping=$3"
+}
+
+if birdc "show status" | grep -q "Daemon is up and running"; then
+    count=$(birdc "show protocol"|grep "  up  "|wc -l)
+    if [ "$count" -gt 7 ]; then
+        push_status up OK "$count"
+    else
+        push_status down OK "$count"
+    fi
+else
+    push_status down DOWN 0
+fi

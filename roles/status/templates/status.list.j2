@@ -1,0 +1,5 @@
+{{ ansible_managed | comment }}
+
+{% for check in uptimekuma_checks %}
++usr/local/lib/status-{{ check }}.sh
+{% endfor %}

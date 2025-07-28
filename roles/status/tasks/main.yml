@@ -1,0 +1,17 @@
+- name: Protect status scripts by lbu
+  ansible.builtin.template:
+    src: status.list.j2
+    dest: /etc/apk/protected_paths.d/status.list
+    mode: "0644"
+
+- name: Deploy status scripts
+  ansible.builtin.template:
+    src: status-{{ item }}.sh.j2
+    dest: /usr/local/lib/status-bird.sh
+    mode: "0700"
+  loop: "{{ uptimekuma_checks }}"
+
+- name: Setup cron for contineous status checks
+  ansible.builtin.cron:
+    name: status
+    job: "{% for check in uptimekuma_checks %}/usr/local/lib/status-{{ check }}.sh; {% endfor %}"
