@@ -106,3 +106,25 @@ namespaces:
     routing:
       routes: []
       rules: []
+
+  quarantine:
+    options:
+      sysctl:
+        all: *peering-sysctl
+        default: *peering-sysctl
+    interfaces:
+      - name: ixp-quarantine
+        addresses:
+{% for ip in ip_peering_addresses|sort %}
+          - {{ ip }}
+{% endfor %}
+        link:
+          kind: vlan
+          link: bond0
+          link_netns: null
+          vlan_id: 666
+          state: up
+
+    routing:
+      routes: []
+      rules: []
