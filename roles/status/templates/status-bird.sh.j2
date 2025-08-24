@@ -3,7 +3,10 @@
 export LANG=C
 
 push_status() {
-    exec curl -s -o /dev/null "https://status.dd-ix.net/api/push/{{ uptimekuma_bird_token }}?status=$1&msg=$2&ping=$3"
+    for i in 1 2 3 4 5; do
+        curl -s -o /dev/null "https://status.dd-ix.net/api/push/{{ uptimekuma_bird_token }}?status=$1&msg=$2&ping=$3" && break
+        sleep 2
+    done
 }
 
 if birdc "show status" | grep -q "Daemon is up and running"; then
